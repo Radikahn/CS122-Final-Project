@@ -5,7 +5,7 @@ import budget_plan as bp
 
 
 def logAppend(func):
-    def wrapper(self, *args, **kwargs):
+    def wrapper(*args, **kwargs):
         with open('log_file.txt', 'w+') as file:
             message = f"Exec: {func}"
             file.write(message)
