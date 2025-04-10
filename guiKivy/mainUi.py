@@ -6,36 +6,33 @@ from kivy.uix.label import Label
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
-from kivy.uix.pagelayout import PageLayout
-from kivy.config import Config
+from kivy.uix.anchorlayout import AnchorLayout
 
 
-Config.set('graphics', 'width', '720')
-Config.set('graphics', 'height', '400')
-Config.set('graphics', 'resizable', '1')
-
-
-class MyGridLayout(GridLayout):
+class MyBoxLayout(BoxLayout):
     def __init__(self, **kwargs):
-        super(MyGridLayout, self).__init__(**kwargs)
+        super(MyBoxLayout, self).__init__(**kwargs)
 
-        # set columns of the page
+        self.orientation = "vertical"
 
-        self.cols = 1
-        self.rows = 5
+        self.padding = 20
+        self.spacing = 40
 
-        self.add_widget(Label(text='Create an Account'))
-        self.add_widget(TextInput(multiline=False))
+        self.add_widget(Label(text='Create an Account', font_size=36))
+        self.add_widget(TextInput(multiline=False,
+                        halign="center", font_size=26))
 
-        self.add_widget(Label(text='Account Type'))
-        self.add_widget(TextInput(multiline=False))
+        self.add_widget(Label(text='Account Type', font_size=36))
+        self.add_widget(TextInput(multiline=False,
+                        halign="center", font_size=26))
 
         self.add_widget(Button(text="Make Account"))
 
 
 class MyApp(App):
     def build(self):
-        return MyGridLayout()
+
+        return MyBoxLayout()
 
 
 if __name__ == '__main__':
