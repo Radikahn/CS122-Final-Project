@@ -10,23 +10,64 @@ from kivy.uix.anchorlayout import AnchorLayout
 
 
 class MyBoxLayout(BoxLayout):
+
+    account_name = "Default"
+    account_type = "Defaul"
+
     def __init__(self, **kwargs):
         super(MyBoxLayout, self).__init__(**kwargs)
 
         self.orientation = "vertical"
 
-        self.padding = 20
+        self.padding = 40
         self.spacing = 40
 
-        self.add_widget(Label(text='Create an Account', font_size=36))
-        self.add_widget(TextInput(multiline=False,
-                        halign="center", font_size=26))
+        self.add_widget(Label(text='Create an Account:', font_size=36))
 
-        self.add_widget(Label(text='Account Type', font_size=36))
-        self.add_widget(TextInput(multiline=False,
-                        halign="center", font_size=26))
+        # create anchor layout for text box, smaller than boxlayout size
+        account_name = AnchorLayout(anchor_x='center', anchor_y='center')
 
-        self.add_widget(Button(text="Make Account"))
+        self.account_name_input = TextInput(
+            multiline=False, halign="center", font_size=26, hint_text='Enter a Name For Account')
+        self.account_name_input.size_hint = (0.75, 0.90)
+
+        account_name.add_widget(self.account_name_input)
+
+        self.add_widget(account_name)
+
+        self.add_widget(Label(text='Account Type:', font_size=36))
+
+        # anchor layout for second input
+
+        account_type = AnchorLayout(anchor_x='center', anchor_y='center')
+
+        self.account_type_input = TextInput(
+            multiline=False, halign="center", font_size=26, hint_text='Enter Account Type')
+        self.account_type_input.size_hint = (0.75, 0.90)
+
+        account_type.add_widget(self.account_type_input)
+
+        self.add_widget(account_type)
+
+        # Creating a layout for buttons
+        button_layout = AnchorLayout(anchor_x='center', anchor_y='center')
+
+        # make a submit button, make sure it is centered and smaller than boxlayout
+        create_button = Button(text="Make Account", font_size=20)
+
+        create_button.size_hint = (0.5, 1)
+        create_button.background_normal = ''
+        create_button.background_color = (0.5, 0.2, 1, 0.8)
+        create_button.bind(on_press=self.save_info)
+
+        button_layout.add_widget(create_button)
+
+        self.add_widget(button_layout)
+
+    def save_info(self, instance):
+        self.account_name = self.account_name_input.text
+
+        self.account_type = self.account_type_input.text
 
 
 class MyApp(App):

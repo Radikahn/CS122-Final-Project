@@ -1,5 +1,5 @@
 import budget_plan as bp
-
+from guiKivy import mainUi
 
 # decorator func to log actions of session into log file
 
