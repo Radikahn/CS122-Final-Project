@@ -10,9 +10,15 @@ from kivy.uix.anchorlayout import AnchorLayout
 from sqlalchemy.sql.functions import user
 from data_management import orm_data
 from data_management import user_data
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 
 
-class MyBoxLayout(BoxLayout):
+class ScreenManagment(ScreenManager):
+    def __init__(self, **kwargs):
+        super(ScreenManagment, self).__init__(**kwargs)
+
+
+class MyBoxLayout(BoxLayout, Screen):
 
     account_name = "Default"
     account_type = "Default"
@@ -90,11 +96,59 @@ class MyBoxLayout(BoxLayout):
 
         self.session.commit()
 
+        self.manager.current = 'dashboard'
+
+
+class Dashboard (BoxLayout, Screen):
+
+    def __init__(self, **kwargs):
+        super(Dashboard, self).__init__(**kwargs)
+
+        self.padding = 10
+        self.spacing = 10
+
+        self.orientation = 'vertical'
+
+        # Upper Half of Screen
+        # Make the container for top half
+        top_layout = BoxLayout(orientation='horizontal')
+
+        # Left node of Top Half
+        top_left_node = BoxLayout(orientation='vertical')
+        top_left_node.add_widget(Label(text='Left Node'))
+
+        # Right node of top half
+        top_right_node = BoxLayout(orientation='vertical')
+        top_right_node.add_widget(Label(text='Right Node'))
+
+        top_layout.add_widget(top_left_node)
+        top_layout.add_widget(top_right_node)
+
+        # Bottom Half
+        bottom_layout = BoxLayout(orientation='horizontal')
+
+        # Left node of Top Half
+        bottom_left_node = BoxLayout(orientation='vertical')
+        bottom_left_node.add_widget(Label(text='Left Node'))
+
+        # Right node of top half
+        bottom_right_node = BoxLayout(orientation='vertical')
+        bottom_right_node.add_widget(Label(text='Right Node'))
+        bottom_right_node.add_widget(Button(text='hello cro'))
+
+        bottom_layout.add_widget(bottom_left_node)
+        bottom_layout.add_widget(bottom_right_node)
+
+        self.add_widget(top_layout)
+        self.add_widget(bottom_layout)
+
 
 class MyApp(App):
     def build(self):
-
-        return MyBoxLayout()
+        sm = ScreenManagment(transition=FadeTransition())
+        sm.add_widget(MyBoxLayout(name='register'))
+        sm.add_widget(Dashboard(name='dashboard'))
+        return sm
 
 
 if __name__ == '__main__':
