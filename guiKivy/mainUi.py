@@ -7,12 +7,18 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.anchorlayout import AnchorLayout
+from data_management import orm_data
 
 
 class MyBoxLayout(BoxLayout):
 
     account_name = "Default"
-    account_type = "Defaul"
+    account_type = "Default"
+    engine = orm_data.create_engine('sqlite:///user_account_data.db')
+    Session = orm_data.sessionmaker(bind=engine)
+    session = Session()
+
+
 
     def __init__(self, **kwargs):
         super(MyBoxLayout, self).__init__(**kwargs)
@@ -65,10 +71,14 @@ class MyBoxLayout(BoxLayout):
         self.add_widget(button_layout)
 
     def save_info(self, instance):
-        self.account_name = self.account_name_input.text
+        account_name = self.account_name_input.text
 
-        self.account_type = self.account_type_input.text
+        account_type = self.account_type_input.text
 
+        user_data = orm_data.UserData(
+            username=account_name, account_type=account_type)
+        
+        self.session.add(user_data)
 
 class MyApp(App):
     def build(self):
