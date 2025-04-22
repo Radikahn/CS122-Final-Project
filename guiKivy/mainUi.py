@@ -7,21 +7,29 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.anchorlayout import AnchorLayout
+from sqlalchemy.sql.functions import user
 from data_management import orm_data
+from data_management import user_data
 
 
 class MyBoxLayout(BoxLayout):
 
     account_name = "Default"
     account_type = "Default"
-    engine = orm_data.create_engine('sqlite:///user_account_data.db')
-    Session = orm_data.sessionmaker(bind=engine)
-    session = Session()
-
-
+    # engine = orm_data.create_engine('sqlite:///user_account_data.db')
+    # Session = orm_data.sessionmaker(bind=engine)
+    # session = Session()
 
     def __init__(self, **kwargs):
         super(MyBoxLayout, self).__init__(**kwargs)
+
+        # database setup
+        # database_table = user_data.UserDataTable()
+
+        # orm setup
+        self.engine = orm_data.create_engine('sqlite:///user_account_data.db')
+        self.Session = orm_data.sessionmaker(bind=self.engine)
+        self.session = self.Session()
 
         self.orientation = "vertical"
 
@@ -77,8 +85,11 @@ class MyBoxLayout(BoxLayout):
 
         user_data = orm_data.UserData(
             username=account_name, account_type=account_type)
-        
+
         self.session.add(user_data)
+
+        self.session.commit()
+
 
 class MyApp(App):
     def build(self):
