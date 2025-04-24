@@ -1,3 +1,4 @@
+import time
 import kivy
 from kivy.app import App
 from kivy.uix.behaviors import button
@@ -12,9 +13,11 @@ from data_management import orm_data
 from data_management import user_data
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.core.window import Window
-
+from kivy.uix.image import Image
+import app.app_plot as plot
 
 Window.size = (1280, 720)
+global_name = str()
 
 
 class ScreenManagment(ScreenManager):
@@ -88,6 +91,8 @@ class MyBoxLayout(BoxLayout, Screen):
 
         self.add_widget(button_layout)
 
+# ----------------------Button Functions MyBoxLayout Class-----------------------------------#
+
     def save_info(self, instance):
         account_name = self.account_name_input.text
 
@@ -99,6 +104,9 @@ class MyBoxLayout(BoxLayout, Screen):
         self.session.add(user_data)
 
         self.session.commit()
+
+        global global_name
+        global_name = self.account_name_input.text
 
         self.manager.current = 'dashboard'
 
@@ -113,69 +121,157 @@ class Dashboard (BoxLayout, Screen):
 
         self.orientation = 'vertical'
 
+        self.engine = orm_data.create_engine('sqlite:///user_account_data.db')
+        self.Session = orm_data.sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
+
+# --------------------------------------------------------------------------------------
         # Upper Half of Screen
         # Make the container for top half
         top_layout = BoxLayout(orientation='horizontal')
-        top_layout.padding = 10
-        top_layout.spacing = 10
+        top_layout.padding = 1
+        top_layout.spacing = 1
 
         # Left node of Top Half
-        top_left_node = BoxLayout(orientation='vertical')
-        top_left_node.add_widget(Label(text='Left Node'))
+        self.top_left_node = BoxLayout(orientation='vertical')
+        self.top_left_node.padding = 0.5
+        self.top_left_node.spacing = 0.5
+
+        self.graph_update = AnchorLayout(anchor_x='center', anchor_y='center')
+
+        self.graph_button = Button(text='')
+        self.graph_button.background_normal = 'dashboard.png'
+        self.graph_button.background_down = 'dashboard.png'
+        self.graph_button.size_hint = (1, 1)
+        self.graph_button.padding = 0
+        self.graph_button.bind(on_press=self.dash_plot)
+
+        self.graph_update.add_widget(self.graph_button)
+
+        self.top_left_node.add_widget(self.graph_update)
 
         # Right node of top half
-        top_right_node = BoxLayout(orientation='vertical')
-        top_right_node.padding = 5
-        top_right_node.spacing = 5
+        self.top_right_node = BoxLayout(orientation='vertical')
+        self.top_right_node.padding = 5
+        self.top_right_node.spacing = 5
 
         button_right_layout = AnchorLayout(
             anchor_x='center', anchor_y='center')
         yearly_right = AnchorLayout(anchor_x='center', anchor_y='center')
         monthly_right = AnchorLayout(anchor_x='center', anchor_y='center')
 
+        # Update Button
         update_button = Button(text='Update')
         update_button.size_hint = (0.3, 0.35)
         update_button.background_normal = ''
         update_button.background_color = (0.5, 0.2, 1, 0.8)
+        update_button.bind(on_press=self.set_income_spend)
 
-        yearly_input = TextInput(
+        self.yearly_input = TextInput(
             multiline=False, halign='center', font_size=18, hint_text='Yearly Income')
-        yearly_input.size_hint = (0.5, 0.5)
-        yearly_right.add_widget(yearly_input)
+        self.yearly_input.size_hint = (0.5, 0.5)
+        yearly_right.add_widget(self.yearly_input)
 
-        monthly_input = TextInput(
+        self.monthly_input = TextInput(
             multiline=False, halign='center', font_size=18, hint_text='Monthly Spending')
-        monthly_input.size_hint = (0.5, 0.5)
-        monthly_right.add_widget(monthly_input)
+        self.monthly_input.size_hint = (0.5, 0.5)
+        monthly_right.add_widget(self.monthly_input)
 
         button_right_layout.add_widget(update_button)
 
-        top_right_node.add_widget(Label(text='Yearly Income:'))
-        top_right_node.add_widget(yearly_right)
-        top_right_node.add_widget(Label(text='Monthly Spending:'))
-        top_right_node.add_widget(monthly_right)
-        top_right_node.add_widget(button_right_layout)
+        self.top_right_node.add_widget(Label(text='Yearly Income:'))
+        self.top_right_node.add_widget(yearly_right)
+        self.top_right_node.add_widget(Label(text='Monthly Spending:'))
+        self.top_right_node.add_widget(monthly_right)
+        self.top_right_node.add_widget(button_right_layout)
 
-        top_layout.add_widget(top_left_node)
-        top_layout.add_widget(top_right_node)
+        top_layout.add_widget(self.top_left_node)
+        top_layout.add_widget(self.top_right_node)
+
+
+# ------------------------------------------------------------------------------------------#
 
         # Bottom Half
         bottom_layout = BoxLayout(orientation='horizontal')
 
-        # Left node of Top Half
+        # Left node of Bottom Half
         bottom_left_node = BoxLayout(orientation='vertical')
         bottom_left_node.add_widget(Label(text='Left Node'))
 
-        # Right node of top half
+        # Right node of Bottom half
         bottom_right_node = BoxLayout(orientation='vertical')
         bottom_right_node.add_widget(Label(text='Right Node'))
-        bottom_right_node.add_widget(Button(text='hello cro'))
 
         bottom_layout.add_widget(bottom_left_node)
         bottom_layout.add_widget(bottom_right_node)
 
         self.add_widget(top_layout)
         self.add_widget(bottom_layout)
+
+
+# ----------------------Button Functions For Dashboard Class-----------------------------------#
+
+    def set_income_spend(self, instance):
+
+        warning = Label(text='hello')
+
+        try:
+            self.top_right_node.remove_widget(warning)
+        except Exception as e:
+            pass
+
+        global global_name
+        curr_user = global_name
+
+        yearly = self.yearly_input.text
+
+        monthly = self.monthly_input.text
+
+        try:
+
+            print(yearly)
+
+            if yearly == '':
+                raise Exception
+
+            elif monthly == '':
+                raise Exception
+
+            yearly = int(yearly)
+            monthly = int(monthly)
+
+            update_income = orm_data.update(orm_data.UserData).where(
+                orm_data.UserData.username == curr_user).values(yearly_income=yearly)
+
+            update_spending = orm_data.update(orm_data.UserData).where(
+                orm_data.UserData.username == curr_user).values(monthly_spending=monthly)
+
+            self.session.execute(update_income)
+            self.session.execute(update_spending)
+
+            self.session.commit()
+
+        except Exception as e:
+            warning = Label(text='Must be a Number & No Empty Fiels')
+
+            warning.font_size = 18
+
+            warning.color = (1, 0, 0, 1)
+
+            self.top_right_node.add_widget(warning)
+
+            # self.top_right_node.remove_widget(warning)
+
+    def dash_plot(self, instance):
+
+        plot.testing_plot()
+
+        print("i am here")
+
+        self.graph_button.background_normal = 'dashboard.png'
+
+        self.graph_button.background_down = 'dashboard.png'
 
 
 class MyApp(App):
