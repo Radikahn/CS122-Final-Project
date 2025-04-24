@@ -11,6 +11,10 @@ from sqlalchemy.sql.functions import user
 from data_management import orm_data
 from data_management import user_data
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
+from kivy.core.window import Window
+
+
+Window.size = (1280, 720)
 
 
 class ScreenManagment(ScreenManager):
@@ -49,7 +53,7 @@ class MyBoxLayout(BoxLayout, Screen):
 
         self.account_name_input = TextInput(
             multiline=False, halign="center", font_size=26, hint_text='Enter a Name For Account')
-        self.account_name_input.size_hint = (0.75, 0.90)
+        self.account_name_input.size_hint = (0.5, 0.7)
 
         account_name.add_widget(self.account_name_input)
 
@@ -63,7 +67,7 @@ class MyBoxLayout(BoxLayout, Screen):
 
         self.account_type_input = TextInput(
             multiline=False, halign="center", font_size=26, hint_text='Enter Account Type')
-        self.account_type_input.size_hint = (0.75, 0.90)
+        self.account_type_input.size_hint = (0.5, 0.7)
 
         account_type.add_widget(self.account_type_input)
 
@@ -75,7 +79,7 @@ class MyBoxLayout(BoxLayout, Screen):
         # make a submit button, make sure it is centered and smaller than boxlayout
         create_button = Button(text="Make Account", font_size=20)
 
-        create_button.size_hint = (0.5, 1)
+        create_button.size_hint = (0.3, 0.7)
         create_button.background_normal = ''
         create_button.background_color = (0.5, 0.2, 1, 0.8)
         create_button.bind(on_press=self.save_info)
@@ -112,6 +116,8 @@ class Dashboard (BoxLayout, Screen):
         # Upper Half of Screen
         # Make the container for top half
         top_layout = BoxLayout(orientation='horizontal')
+        top_layout.padding = 10
+        top_layout.spacing = 10
 
         # Left node of Top Half
         top_left_node = BoxLayout(orientation='vertical')
@@ -119,7 +125,36 @@ class Dashboard (BoxLayout, Screen):
 
         # Right node of top half
         top_right_node = BoxLayout(orientation='vertical')
-        top_right_node.add_widget(Label(text='Right Node'))
+        top_right_node.padding = 5
+        top_right_node.spacing = 5
+
+        button_right_layout = AnchorLayout(
+            anchor_x='center', anchor_y='center')
+        yearly_right = AnchorLayout(anchor_x='center', anchor_y='center')
+        monthly_right = AnchorLayout(anchor_x='center', anchor_y='center')
+
+        update_button = Button(text='Update')
+        update_button.size_hint = (0.3, 0.35)
+        update_button.background_normal = ''
+        update_button.background_color = (0.5, 0.2, 1, 0.8)
+
+        yearly_input = TextInput(
+            multiline=False, halign='center', font_size=18, hint_text='Yearly Income')
+        yearly_input.size_hint = (0.5, 0.5)
+        yearly_right.add_widget(yearly_input)
+
+        monthly_input = TextInput(
+            multiline=False, halign='center', font_size=18, hint_text='Monthly Spending')
+        monthly_input.size_hint = (0.5, 0.5)
+        monthly_right.add_widget(monthly_input)
+
+        button_right_layout.add_widget(update_button)
+
+        top_right_node.add_widget(Label(text='Yearly Income:'))
+        top_right_node.add_widget(yearly_right)
+        top_right_node.add_widget(Label(text='Monthly Spending:'))
+        top_right_node.add_widget(monthly_right)
+        top_right_node.add_widget(button_right_layout)
 
         top_layout.add_widget(top_left_node)
         top_layout.add_widget(top_right_node)
