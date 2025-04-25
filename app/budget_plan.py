@@ -1,17 +1,37 @@
 import user_accounts
 from BudgetExceptions import *
 
+#calculates how many months of saving to reach desired savings goal
+def monthly_projection(account, monthly_spending, goal):
 
-def saving_goal(account, monthly_spending, goal, amount_saved):
+    monthly_income = account.yearly_income / 12
 
-    income = account.yearly_income / 12
-
-    dividend = income - monthly_spending
-
-    dividend -= amount_saved  # new divident is amount they are choosing to save per week
+    dividend = monthly_income - monthly_spending
 
     if dividend <= 0:
         raise ZeroNegativeError(
             "[ERROR]: The savings dividend per month is either 0 or Negative")
 
     return goal / dividend
+
+#calculates recommended monthly saving amount and spending budget given inputted goals and income
+def saving_target(account, saving_goal, time_goal):
+    monthly_income = account.yearly_income / 12
+
+    rec_saving = saving_goal / time_goal
+
+    remainder = monthly_income - rec_saving
+
+    return rec_saving, remainder
+
+#calculates total saved given inputted monthly income and timeframe
+def savings_projection(account, monthly_spending, timeframe):
+    monthly_income = account.yearly_income / 12
+
+    dividend = monthly_income - monthly_spending
+
+    if dividend <= 0:
+        raise ZeroNegativeError(
+            "[ERROR]: The savings dividend per month is either 0 or Negative")
+
+    return dividend * timeframe
