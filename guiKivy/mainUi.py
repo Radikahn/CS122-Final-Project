@@ -143,7 +143,7 @@ class Dashboard (BoxLayout, Screen):
         self.graph_button = Button(text='')
         self.graph_button.background_normal = 'dashboard.png'
         self.graph_button.background_down = 'dashboard.png'
-        self.graph_button.size_hint = (1, 1)
+        self.graph_button.size_hint = (0.85, 1)
         self.graph_button.padding = 0
         self.graph_button.bind(on_press=self.dash_plot)
 
@@ -212,14 +212,15 @@ class Dashboard (BoxLayout, Screen):
 
 # ----------------------Button Functions For Dashboard Class-----------------------------------#
 
-    def set_income_spend(self, instance):
-
-        warning = Label(text='hello')
+    def show_error(self):
 
         try:
-            self.top_right_node.remove_widget(warning)
+            self.top_right_node.remove_widget(self.warning)
+
         except Exception as e:
             pass
+
+    def set_income_spend(self, instance):
 
         global global_name
         curr_user = global_name
@@ -253,21 +254,20 @@ class Dashboard (BoxLayout, Screen):
             self.session.commit()
 
         except Exception as e:
-            warning = Label(text='Must be a Number & No Empty Fiels')
 
-            warning.font_size = 18
+            self.show_error()
 
-            warning.color = (1, 0, 0, 1)
+            self.warning = Label(text='Must be a Number & No Empty Fiels')
 
-            self.top_right_node.add_widget(warning)
+            self.warning.font_size = 18
 
-            # self.top_right_node.remove_widget(warning)
+            self.warning.color = (1, 0, 0, 1)
+
+            self.top_right_node.add_widget(self.warning)
 
     def dash_plot(self, instance):
 
         plot.testing_plot()
-
-        print("i am here")
 
         self.graph_button.background_normal = 'dashboard.png'
 
