@@ -1,9 +1,7 @@
-import budget_plan as bp
+import app.budget_plan as bp
 from guiKivy import mainUi
 
 # decorator func to log actions of session into log file
-
-
 def logAppend(func):
     def wrapper(*args, **kwargs):
         with open('log_file.txt', 'w+') as file:
@@ -21,14 +19,17 @@ class UserAccounts:
     account_type: str
     monthly_spending: float
 
-    def __init__(self, username: str, account_type: str, income: float, monthly_spending: float) -> None:
+   #def __init__(self, username: str, account_type: str, income: float, monthly_spending: float) -> None:
 
         # Assign user values to class attributes
-        self.username = username
-        self.yearly_income = income
-        self.account_type = account_type
-        self.monthly_spending = monthly_spending
+        #self.username = username
+       # self.yearly_income = income
+        #self.account_type = account_type
+        #self.monthly_spending = monthly_spending
         # initialize log file for current session
+        #open('log_file.txt', 'w+')
+
+    def __init__(self):
         open('log_file.txt', 'w+')
 
     @logAppend
@@ -36,27 +37,23 @@ class UserAccounts:
         self.username = name
 
     @logAppend
-    def saving_goal(self):
-        goal = 10000
+    def saving_goal(self, goal:float):
 
         month_projection = bp.monthly_projection(self, self.monthly_spending, goal)
 
         print(f"It will take {month_projection} months to save ${goal}.")
 
     @logAppend
-    def time_goal(self):
-        month_goal = 6 #6 month goal
-        saving_goal = 10000
-
+    def time_goal(self, month_goal: int, saving_goal: float):
+        
         saving_amount, budget = bp.saving_target(self, saving_goal, month_goal)
 
         print(f"Save: ${saving_amount:.2f} per month to reach your goal in time.")
         print(f"Your monthly spending budget is: ${budget:.2f}")
 
     @logAppend
-    def saving_projection(self):
-        timeframe = 6 #6 months
+    def saving_projection(self, time_frame: int):
 
-        amount_saved = bp.savings_projection(self, self.monthly_spending, timeframe)
+        amount_saved = bp.savings_projection(self, self.monthly_spending, time_frame)
 
-        print(f"Over {timeframe} months, you will have ${amount_saved:.2f} saved up.")
+        print(f"Over {time_frame} months, you will have ${amount_saved:.2f} saved up.")

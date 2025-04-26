@@ -15,10 +15,15 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.core.window import Window
 from kivy.uix.image import Image
 import app.app_plot as plot
+from app.user_accounts import UserAccounts
+import app.budget_plan as budget
 
 Window.size = (1280, 720)
 global_name = str()
 
+
+#create an instance of the UserAccount class
+global_account = UserAccounts()
 
 class ScreenManagment(ScreenManager):
     def __init__(self, **kwargs):
@@ -196,19 +201,49 @@ class Dashboard (BoxLayout, Screen):
         bottom_layout = BoxLayout(orientation='horizontal')
 
         # Left node of Bottom Half
-        bottom_left_node = BoxLayout(orientation='vertical')
-        bottom_left_node.add_widget(Label(text='Left Node'))
+        bottom_left_node = BoxLayout(orientation='horizontal')
+        bottom_left_node.padding = 10
+        bottom_left_node.spacing = 10
+
+
+        monthly_projection = Button(text = 'Monthly Projections')
+        monthly_projection.background_normal = ''
+        monthly_projection.background_color = (0.5, 0.2, 1, 0.8)
+        monthly_projection.bind(on_press = self.screen_swtich_to)
+
+
+        saving_target = Button(text = 'Savings Target')
+        saving_target.background_normal = ''
+        saving_target.background_color = (0.5, 0.2, 1, 0.8)
+        saving_target.bind(on_press = self.screen_swtich_to)
+
+        bottom_left_node.add_widget(monthly_projection)
+        bottom_left_node.add_widget(saving_target)
 
         # Right node of Bottom half
-        bottom_right_node = BoxLayout(orientation='vertical')
-        bottom_right_node.add_widget(Label(text='Right Node'))
+        bottom_right_node = BoxLayout(orientation='horizontal')
+        bottom_right_node.spacing = 10
+        bottom_right_node.padding = 10
+
+
+        savings_projection = Button(text = 'Savings Projection')
+        savings_projection.background_normal = ''
+        savings_projection.background_color = (0.5, 0.2, 1, 0.8)
+        savings_projection.bind(on_press = self.screen_swtich_to)
+
+        account_settings = Button(text = 'Account Settings')
+        account_settings.background_normal = ''
+        account_settings.background_color = (0.5, 0.2, 1, 0.8)
+        account_settings.bind(on_press = self.screen_swtich_to)
+
+        bottom_right_node.add_widget(savings_projection)
+        bottom_right_node.add_widget(account_settings)
 
         bottom_layout.add_widget(bottom_left_node)
         bottom_layout.add_widget(bottom_right_node)
 
         self.add_widget(top_layout)
         self.add_widget(bottom_layout)
-
 
 # ----------------------Button Functions For Dashboard Class-----------------------------------#
 
@@ -253,6 +288,8 @@ class Dashboard (BoxLayout, Screen):
 
             self.session.commit()
 
+            self.dash_plot(instance)
+
         except Exception as e:
 
             self.show_error()
@@ -272,6 +309,123 @@ class Dashboard (BoxLayout, Screen):
         self.graph_button.background_normal = 'dashboard.png'
 
         self.graph_button.background_down = 'dashboard.png'
+    
+    def screen_swtich_to (self, instance):
+
+        self.manager.current = instance.text
+
+#--------------------------Feature Screen Template---------------------------#
+
+class FeatureScreen(BoxLayout, Screen):
+
+    def __init__(self, **kwargs):
+        super(FeatureScreen, self).__init__(**kwargs)
+        
+        self.orientation = 'vertical'
+        self.padding = 0
+        self.spacing = 0
+        self.graph_name = 'dashboard.png'
+        self.func = budget.monthly_projection 
+        
+        self.return_button = Button(text = 'Back to Dashboad')
+        self.return_button.background_normal = ''
+        self.return_button.background_color = (0.5, 0.2, 1, 0.8)
+        self.return_button.size_hint = (1, 0.1)
+        self.return_button.padding = 10
+        self.return_button.bind(on_press = self.return_to_dash)
+        
+        self.graph_container = AnchorLayout(anchor_x = 'center', anchor_y = 'top')
+        self.graph = Image(source = self.graph_name)
+        self.graph.size_hint = (1.7, 1.7)
+        self.graph_container.add_widget(self.graph)
+
+
+        self.menu_page = BoxLayout(orientation = 'horizontal')
+        self.menu_page.padding = 15
+        self.menu_page.spacing = 15
+
+        self.left_input = TextInput(multiline=False, halign='center', font_size=18, hint_text='Monthly Spending')
+        self.left_input.size_hint = (0.3, 0.2)
+        self.menu_page.add_widget(self.left_input)
+       
+
+        self.right_input = TextInput(multiline=False, halign='center', font_size=18, hint_text='Saving Goal')
+        self.right_input.size_hint = (0.3, 0.2) 
+        self.menu_page.add_widget(self.right_input)
+
+
+        self.submit_button  = Button(text = 'See My Goal')
+        self.submit_button.size_hint = (1, 0.2)
+
+        self.add_widget(self.return_button)
+        self.add_widget(self.graph_container)
+        self.add_widget(self.menu_page)
+        self.add_widget(self.submit_button)
+
+
+    def return_to_dash(self, instance):
+        self.manager.current = 'dashboard' 
+
+
+    def update_graph(self, instance):
+
+        self.graph_container.remove_widget(self.graph)
+       
+        self.graph = Image(source = self.graph_name)
+        
+        self.graph_container.add_widget(self.graph)
+
+    def set_params(self, instance):
+        
+        global global_account
+
+        first_input = self.left_input.text
+        second_input = self.right_input.text
+
+        self.func(global_account, first_input, second_input)
+
+        self.update_graph(instance)
+
+#---------------------------Feature Prediction Screens-------------------------------#
+
+class MonthlyPrediction(FeatureScreen):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.left_input.hint_text = 'Savings Goal (Total)'
+        self.right_input.hint_text = 'How Many Months'
+        self.func = budget.monthly_projection
+
+
+class SavingTarget(FeatureScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        
+        self.left_input.hint_text = 'Saving Goal'
+        self.right_input.text = 'Number of Months'
+        self.func = budget.saving_target
+         
+
+
+
+class SavingsProjection(FeatureScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        
+        self.left_input.hint_text = 'Monthly Spending'
+
+        self.right_input.hint_text =  'Number of Months'
+        
+        self.func = budget.savings_projection
+
+class AccountSettings(FeatureScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+       
+        self.left_input.hint_text = 'New Account Name'
+        self.right_input.hint_text = 'New Account Type'
+
 
 
 class MyApp(App):
@@ -279,6 +433,10 @@ class MyApp(App):
         sm = ScreenManagment(transition=FadeTransition())
         sm.add_widget(MyBoxLayout(name='register'))
         sm.add_widget(Dashboard(name='dashboard'))
+        sm.add_widget(MonthlyPrediction(name = 'Monthly Projections'))
+        sm.add_widget(SavingTarget(name = 'Savings Target'))
+        sm.add_widget(SavingsProjection(name = 'Savings Projection'))
+        sm.add_widget(AccountSettings(name = 'Account Settings'))
         return sm
 
 

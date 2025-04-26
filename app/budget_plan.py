@@ -1,5 +1,5 @@
-import user_accounts
-from BudgetExceptions import *
+import app.user_accounts
+from app.BudgetExceptions import *
 
 #calculates how many months of saving to reach desired savings goal
 def monthly_projection(account, monthly_spending, goal):
