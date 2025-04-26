@@ -38,8 +38,25 @@ class UserAccounts:
     @logAppend
     def saving_goal(self):
         goal = 10000
-        amount_saved = 1000
 
-        days = bp.saving_goal(self, self.monthly_spending, goal, amount_saved)
+        month_projection = bp.monthly_projection(self, self.monthly_spending, goal)
 
-        print(days)
+        print(f"It will take {month_projection} months to save ${goal}.")
+
+    @logAppend
+    def time_goal(self):
+        month_goal = 6 #6 month goal
+        saving_goal = 10000
+
+        saving_amount, budget = bp.saving_target(self, saving_goal, month_goal)
+
+        print(f"Save: ${saving_amount:.2f} per month to reach your goal in time.")
+        print(f"Your monthly spending budget is: ${budget:.2f}")
+
+    @logAppend
+    def saving_projection(self):
+        timeframe = 6 #6 months
+
+        amount_saved = bp.savings_projection(self, self.monthly_spending, timeframe)
+
+        print(f"Over {timeframe} months, you will have ${amount_saved:.2f} saved up.")
