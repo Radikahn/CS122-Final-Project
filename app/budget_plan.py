@@ -20,9 +20,7 @@ def saving_target(account, saving_goal, time_goal):
 
     rec_saving = saving_goal / time_goal
 
-    remainder = monthly_income - rec_saving
-
-    return rec_saving, remainder
+    return rec_saving
 
 #calculates total saved given inputted monthly income and timeframe
 def savings_projection(account, monthly_spending, timeframe):

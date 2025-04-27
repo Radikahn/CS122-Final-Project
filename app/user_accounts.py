@@ -32,28 +32,32 @@ class UserAccounts:
     def __init__(self):
         open('log_file.txt', 'w+')
 
+
     @logAppend
     def change_name(self, name):
         self.username = name
+
+    @logAppend
+    def change_account_type(self, account_type):
+        self.account_type = account_type
 
     @logAppend
     def saving_goal(self, goal:float):
 
         month_projection = bp.monthly_projection(self, self.monthly_spending, goal)
 
-        print(f"It will take {month_projection} months to save ${goal}.")
+        return f"It will take {month_projection} months to save ${goal}."
 
     @logAppend
     def time_goal(self, month_goal: int, saving_goal: float):
         
         saving_amount, budget = bp.saving_target(self, saving_goal, month_goal)
 
-        print(f"Save: ${saving_amount:.2f} per month to reach your goal in time.")
-        print(f"Your monthly spending budget is: ${budget:.2f}")
+        return f"Save: ${saving_amount:.2f} per month to reach your goal in time.Your monthly spending budget is: ${budget:.2f}"
 
     @logAppend
     def saving_projection(self, time_frame: int):
 
         amount_saved = bp.savings_projection(self, self.monthly_spending, time_frame)
 
-        print(f"Over {time_frame} months, you will have ${amount_saved:.2f} saved up.")
+        return f"Over {time_frame} months, you will have ${amount_saved:.2f} saved up."
