@@ -22,15 +22,15 @@ class TestOrmFunction(unittest.TestCase):
     
     def test_table_add(self):
         
-        user_data = orm_data.UserData(username = "Michael", account_type = "Savings", yearly_income = 130000, monthly_spending = 3200) 
+        user_data = orm_data.UserData(username = "Billy", account_type = "Savings", yearly_income = 130000, monthly_spending = 3200) 
 
         self.session.add(user_data)
 
         self.session.commit()
 
-        user_instance = self.session.query(orm_data.UserData.username).filter_by(username = "Michael").all()
+        user_instance = self.session.query(orm_data.UserData.username).filter_by(username = "Billy").scalar()
 
-        self.assertEqual(user_instance, "Michael")
+        self.assertEqual(user_instance, "Billy")
 
 
     def test_table_update(self):
@@ -40,14 +40,15 @@ class TestOrmFunction(unittest.TestCase):
     
         self.session.execute(update_income)
     
-        user_instance = self.session.query(orm_data.UserData.yearly_income).filter_by(username = 'Tom').all()
+        user_instance = self.session.query(orm_data.UserData.yearly_income).filter_by(username = 'Tom').scalar()
+
 
         self.assertEqual(user_instance,190000)
 
 
     def test_table_query(self):
         
-        user_instance = self.session.query(orm_data.UserData.username).filter_by(username = 'Tom').all()
+        user_instance = self.session.query(orm_data.UserData.username).filter_by(username = 'Tom').scalar()
 
         self.assertEqual(user_instance, "Tom")
 
