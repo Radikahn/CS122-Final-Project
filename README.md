@@ -1,19 +1,19 @@
-### CS122-Final-Project: MoneyUrWay
+# CS122-Final-Project: MoneyUrWay
 
-# Members
+### Members
 - Radman Shahbazkhan and Miguel Lorenzo Viray
 
-### Description
+# Description
 MoneyUrWay is a budgetting application that allows the user to input their financial details to create spending plans and visualize their spending habbits in correlation to their income.
 
-### Dependencies --Executable file included--
+# Dependencies --Executable file included--
 
-# HIGHLY RECCOMEND:
+### HIGHLY RECCOMEND:
 Within the zip file there is a ```MoneyUrWay``` executable file that will run the project without the need for complicated dependency installation.
 
 However if you must setup the project...
 
-# Installation Instructions
+### Installation Instructions
 This project MUST be ran on **3.9.21**
 
 Step 0: create a virtual environment on python version 3.9.21
@@ -36,7 +36,7 @@ Step 8: ```pip install sqlalchemy```
 
 Step 9: ```python main.py```
 
-# Pip Freeze Dependencies
+### Pip Freeze Dependencies
 
 altgraph==0.17.4
 certifi==2025.4.26
@@ -74,9 +74,9 @@ tzdata==2025.2
 urllib3==2.4.0
 zipp==3.21.0
 
-### Project File Structure
+# Project File Structure
 
-# Modules
+### Modules
 
 The project contains 4 modules: app, data_management, guiKivy, tests.
 
@@ -92,7 +92,7 @@ The project contains 4 modules: app, data_management, guiKivy, tests.
 - tests module:
     - Contains the file for running our test cases on our ORM database.
 
-# Main Files
+### Main Files
 
 There are two main "run" files in the project: ```main.py```, ```run_tests.py```, and ```MoneyUrWay```
 
@@ -103,7 +103,7 @@ There are two main "run" files in the project: ```main.py```, ```run_tests.py```
 - MoneyUrWay is an executable file used to run the project without python venv setup
 
 
-### Bugs
+# Bugs
 
 There are currently no known bugs. The CSV functionality is only designed for the "developer". This means there are not direct functions within the GUI to manage the CSV, but rather through the code/console
 
